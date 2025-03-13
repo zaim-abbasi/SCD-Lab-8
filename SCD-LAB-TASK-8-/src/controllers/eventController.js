@@ -1,47 +1,44 @@
-const Event = require('../models/event'); 
-const User = require('../models/user'); 
+const { Event, User } = require('../models/events');
 
 // Create a new event
-const createEvent = async (req, res) => {
+const createEvent = (req, res) => {
     try {
         const eventData = req.body;
-        const newEvent = await Event.create(eventData);
+        const newEvent = Event.create(eventData);
         res.status(201).json(newEvent);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-// ...existing code...
-
-const getEvents = async (req, res) => {
+const getEvents = (req, res) => {
     try {
         const { sortBy } = req.query;
-        const sortOptions = {};
+        let events = Event.find({ date: { $gte: new Date() } });
+
         if (sortBy === 'date') {
-            sortOptions.date = 1;
+            events = events.sort((a, b) => new Date(a.date) - new Date(b.date));
         } else if (sortBy === 'category') {
-            sortOptions.category = 1;
+            events = events.sort((a, b) => a.category.localeCompare(b.category));
         } else if (sortBy === 'reminder') {
-            sortOptions.reminders = 1;
+            events = events.sort((a, b) => a.reminders.length - b.reminders.length);
         }
-        const events = await Event.find({ date: { $gte: new Date() } }).sort(sortOptions);
+
         res.status(200).json(events);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
-    
-// ...existing code...
 
 // Setting a reminder for the upcoming events
-const setReminder = async (req, res) => {
+const setReminder = (req, res) => {
     try {
         const { eventId, reminderTime } = req.body;
-        const event = await Event.findById(eventId);
+        const event = Event.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
         }
+        event.reminders.push(new Date(reminderTime));
         res.status(200).json({ message: 'Reminder set successfully' });
     } catch (error) {
         res.status(400).json({ message: error.message });
