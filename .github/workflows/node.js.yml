@@ -18,8 +18,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug - List files
-        run: ls -la
+      - name: Debug - Show current directory
+        run: pwd
+
+      - name: Debug - List all files in workspace
+        run: ls -R
 
       - name: Install dependencies
         run: npm install
