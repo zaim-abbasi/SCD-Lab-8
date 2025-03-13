@@ -12,9 +12,7 @@ on:
 
 jobs:
   build-node:
-    runs-on: macos-latest
-    container: node:16
-
+    runs-on: macos-latest 
     steps:
     - run: node --version
     - run: npm --version
