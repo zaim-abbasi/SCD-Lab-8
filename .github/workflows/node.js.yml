@@ -12,10 +12,14 @@ on:
 
 jobs:
   build-node:
-    runs-on: macos-latest 
+    runs-on: macos-latest
+
     steps:
-    - run: node --version
-    - run: npm --version
-    - uses: actions/checkout@v4
-    - run: npm i
-    - run: node app.js
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Debug - List files
+        run: ls -la
+
+      - name: Install dependencies
+        run: npm install
